@@ -40,3 +40,11 @@ van_car_h = 100
 reduce_speed = 8
 traffic_speed = 10
 aparecer_arriba = -80
+
+# PowerUps:
+powerup_w = 40
+powerup_h = 40
+
+# Hole:
+danger_hole_w = 42
+danger_hole_h = 42
