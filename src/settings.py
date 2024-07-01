@@ -31,8 +31,8 @@ centrar_road = CENTER_X - road_w // 2
 limte_x_road = centrar_road + road_w
 
 # Traffic:
-blue_car_w = 68
-blue_car_h = 95
+traffic_car_w = 68
+traffic_car_h = 95
 
 van_car_w = 80
 van_car_h = 100
@@ -46,5 +46,5 @@ powerup_w = 40
 powerup_h = 40
 
 # Hole:
-danger_hole_w = 42
-danger_hole_h = 42
+danger_hole_w = 100
+danger_hole_h = 100
