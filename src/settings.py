@@ -26,7 +26,7 @@ player_h = 95
 road_y = 0  # posicion inicial de la imagen de la calle
 road_w = 350
 road_h = HEIGHT
-scroll_speed = 14
+scroll_speed = 16
 centrar_road = CENTER_X - road_w // 2
 limte_x_road = centrar_road + road_w
 

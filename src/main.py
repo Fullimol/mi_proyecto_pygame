@@ -5,6 +5,8 @@ from colisiones import *
 
 ##########  (!)   30/06  quitar/agregar los .convert() para sacar los fondos negros. HAY QUE CORREGIR LOS RECTANGULOS DE CADA BLOQUE  ##########
 
+# SUGERENCIA: HACER que el corazon de vida se mueva de derecha a izquierda para mas dificultad de agarrarlo.
+
 
 
 # pygame setup
@@ -25,9 +27,10 @@ pygame.time.set_timer(NEWDANGERHOLE, 3000)
 music_race = pygame.mixer.Sound("./src/assets/sounds/music-race.mp3")
 music_race.set_volume(0.1)
 healt_sound = pygame.mixer.Sound("./src/assets/sounds/health.mp3")
+healt_sound.set_volume(0.07)
 motor_carFX = pygame.mixer.Sound("./src/assets/sounds/motorFX.mp3")
-motor_carFX.set_volume(0.04)
-
+motor_carFX.set_volume(0.03)
+music_race.play(loops=-1)
 
 # Cargar imagenes
 def escalar_imagenes(imagen, width, height):
@@ -72,9 +75,29 @@ fuente = pygame.font.SysFont(None, 48)
 score = 0
 health = 100
 
-music_race.play()
-motor_carFX.play(loops=-1)
+def mostrar_texto(superficie:pygame.Surface, coordenada:tuple[int, int], texto:str, fuente:pygame.font.Font, color:tuple[int, int, int]= WHITE, background_color:tuple[int, int, int]= BLACK ):
+    sup_texto = fuente.render(texto , True, color, background_color)
+    rect_texto = sup_texto.get_rect()
+    rect_texto.center = coordenada
+    superficie.blit(sup_texto, rect_texto)
 
+# Ventana de inicio
+screen.fill(GREEN)
+mostrar_texto(screen, (CENTER_X, 100), "FURIOUS ROAD", fuente, RED, BLUE)
+mostrar_texto(screen, CENTER_SCREEN, "Presione 'Espacio' para comenzar", fuente, RED, BLUE)
+pygame.display.flip()
+flag_start = True
+while flag_start:
+    motor_carFX.stop()
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                flag_start = False
+
+
+motor_carFX.play(loops=-1)
 while running:
     clock.tick(FPS)
     
@@ -208,12 +231,9 @@ while running:
     screen.blit(health_powerup_image, (power_up_healt["rect"].x, power_up_healt["rect"].y))
 
 
-
     # Dibujar el puntaje en la pantalla
-    score_text = fuente.render(f'Score: {score}', False, BLACK)
-    healt_text = fuente.render(f'Health:% {health}', True, RED)
-    screen.blit(score_text, (10, 10))
-    screen.blit(healt_text, (10, 50))
+    mostrar_texto(screen, (100, 80), f'Score: {score}', fuente, RED, BLUE)
+    mostrar_texto(screen, (680 , 80), f'Health %{health}', fuente, RED, BLUE)
                           
     pygame.display.flip() # actualiza la pantalla
     #       ----> FIN dibujar elementos en pantalla <----
