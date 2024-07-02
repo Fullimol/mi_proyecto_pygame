@@ -6,7 +6,7 @@ import sys
 
 ##########  (!)   30/06  quitar/agregar los .convert() para sacar los fondos negros. HAY QUE CORREGIR LOS RECTANGULOS DE CADA BLOQUE  ##########
 
-# SUGERENCIA: HACER que el corazon de vida se mueva de derecha a izquierda para mas dificultad de agarrarlo.
+## SUGERENCIA:   Hacer un bloque marron para poner en los costados de la ruta simulando la tierra.
 
 def terminar():
     pygame.quit()
@@ -17,14 +17,10 @@ pygame.init()
 screen = pygame.display.set_mode(SIZE_SCREEN)
 clock = pygame.time.Clock()
 
-
-lista_imagenes = []
-
 NEWPOWERUPEVENT = pygame.USEREVENT + 1
 NEWDANGERHOLE = pygame.USEREVENT + 2
 pygame.time.set_timer(NEWPOWERUPEVENT, 5000)
 pygame.time.set_timer(NEWDANGERHOLE, 3000)
-
 
 # Cargar sonidos
 music_race = pygame.mixer.Sound("./src/assets/sounds/music-race.mp3")
@@ -46,38 +42,35 @@ def escalar_imagenes(imagen, width, height):
     return pygame.transform.scale(imagen, (width, height))
 
 traffic_cars_images = [
-    escalar_imagenes(pygame.image.load("./src/assets/blue-car.png"), traffic_car_w, traffic_car_h),
-    escalar_imagenes(pygame.image.load("./src/assets/pink-car.png"), traffic_car_w, traffic_car_h),
-    escalar_imagenes(pygame.image.load("./src/assets/van-car.png"), traffic_car_w, traffic_car_h),
-    escalar_imagenes(pygame.image.load("./src/assets/green-car.png"), traffic_car_w, traffic_car_h),
-    escalar_imagenes(pygame.image.load("./src/assets/yellow-car.png"), traffic_car_w, traffic_car_h),
-    escalar_imagenes(pygame.image.load("./src/assets/white-car.png"), traffic_car_w, traffic_car_h)
+    escalar_imagenes(pygame.image.load("./src/assets/images/blue-car.png"), traffic_car_w, traffic_car_h),
+    escalar_imagenes(pygame.image.load("./src/assets/images/pink-car.png"), traffic_car_w, traffic_car_h),
+    escalar_imagenes(pygame.image.load("./src/assets/images/van-car.png"), traffic_car_w, traffic_car_h),
+    escalar_imagenes(pygame.image.load("./src/assets/images/green-car.png"), traffic_car_w, traffic_car_h),
+    escalar_imagenes(pygame.image.load("./src/assets/images/yellow-car.png"), traffic_car_w, traffic_car_h),
+    escalar_imagenes(pygame.image.load("./src/assets/images/white-car.png"), traffic_car_w, traffic_car_h)
 ]
 
-road_image = pygame.image.load("./src/assets/road.jpg")
+road_image = pygame.image.load("./src/assets/images/road.jpg")
 road_image = pygame.transform.scale(road_image, (road_w, road_h))
                                                              # QUITAR o poner EL CONVERT() PARA VER LOS FONDOS NEGROS.
-red_car_image = pygame.image.load("./src/assets/red-car.png")
-health_powerup_image = pygame.image.load("./src/assets/health.png")
+red_car_image = pygame.image.load("./src/assets/images/red-car.png")
+health_powerup_image = pygame.image.load("./src/assets/images/health.png")
 health_powerup_image = pygame.transform.scale(health_powerup_image, (45, 45))
-danger_hole_image = pygame.image.load("./src/assets/hole.png")
+danger_hole_image = pygame.image.load("./src/assets/images/hole.png")
 danger_hole_image = escalar_imagenes(danger_hole_image, danger_hole_w, danger_hole_h)
-menu_background = pygame.image.load("./src/assets/background.jpg")
+menu_background = pygame.image.load("./src/assets/images/background.jpg")
 menu_background = pygame.transform.scale(menu_background, (WIDTH, HEIGHT))
 
-
-
-
 # configuro la fuente del texto
-fuente = pygame.font.SysFont(None, 48)
+fuente = pygame.font.Font("./src/assets/fonts/dash-horizon.otf", 75)
+fuente_2 = pygame.font.SysFont(None, 48)
 
 
-def mostrar_texto(superficie:pygame.Surface, coordenada:tuple[int, int], texto:str, fuente:pygame.font.Font, color:tuple[int, int, int]= WHITE, background_color:tuple[int, int, int]= BLACK ):
+def mostrar_texto(superficie:pygame.Surface, coordenada:tuple[int, int], texto:str, fuente:pygame.font.Font, color:tuple[int, int, int]= WHITE, background_color:tuple[int, int, int]= None ):
     sup_texto = fuente.render(texto , True, color, background_color)
     rect_texto = sup_texto.get_rect()
     rect_texto.center = coordenada
     superficie.blit(sup_texto, rect_texto)
-
 
 def wait_user(tecla):
     flag_start = True
@@ -91,7 +84,6 @@ def wait_user(tecla):
                     select_sound.play()
                     flag_start = False
 
-
 high_score = 0
 mov_horizontal = True
 while True:
@@ -99,10 +91,10 @@ while True:
     screen.fill(GREEN)
     screen.blit(menu_background, (0, 0))
 
-    mostrar_texto(screen, (CENTER_X, 100), "FURIOUS ROAD", fuente, RED, BLUE)
+    mostrar_texto(screen, (CENTER_X, 100), "xxx FURIOUS ROAD xxx", fuente, MAGENTA)
     if high_score != 0:
-        mostrar_texto(screen, (CENTER_SCREEN), f"High Score: {high_score}", fuente, RED, BLUE)
-    mostrar_texto(screen, (CENTER_X, 500), "SPACE to start", fuente, RED, BLUE)
+        mostrar_texto(screen, (CENTER_SCREEN), f"High Score    {high_score}", fuente, MAGENTA)
+    mostrar_texto(screen, (CENTER_X, 500), "SPACE to start", fuente_2, MAGENTA)
     pygame.display.flip()
     wait_user(pygame.K_SPACE)
 
@@ -207,7 +199,7 @@ while True:
             score -= 1
         if player_block["rect"].right > limte_x_road:
             player_block["rect"].y += SPEED - 1
-            move_down = False
+            move_up = False
             score -= 1
 
         # mover el autito de trafico
@@ -240,13 +232,13 @@ while True:
 
         # Detectar si chocamos con los conos
         if detectar_colision(player_block["rect"], danger_hole["rect"]):
+            hornFX.play()
             move_up = False
             player_block["rect"].y += reduce_speed 
             health -= 1
             
         # Detectamos si perdimos y terminar partida:
         if health <= 0 or player_block["rect"].top > HEIGHT:
-            game_over_sound.play()
             running = False
 
         # Incrementar el puntaje
@@ -274,16 +266,19 @@ while True:
 
 
         # Dibujar el puntaje en la pantalla
-        mostrar_texto(screen, (100, 80), f'Score: {score}', fuente, RED, BLUE)
-        mostrar_texto(screen, (680 , 80), f'Health %{health}', fuente, RED, BLUE)
+        if high_score != 0:
+            mostrar_texto(screen, (100, 120), f"High: {high_score}", fuente_2, WHITE, BLACK)
+        mostrar_texto(screen, (100, 80), f'Score: {score}', fuente_2, CYAN, BLACK)
+        mostrar_texto(screen, (680 , 80), f'Healt %{health}', fuente_2, RED, BLACK)
                             
         pygame.display.flip() # actualiza la pantalla
         #       ----> FIN dibujar elementos en pantalla <----
 
     # Pantalla GAME OVER
     motor_carFX.stop()
-    mostrar_texto(screen, (CENTER_X, 300), "GAME OVER", fuente, RED, BLUE)
-    mostrar_texto(screen, (CENTER_X, 500), "SPACE to retry", fuente, RED, BLUE)
+    game_over_sound.play()
+    mostrar_texto(screen, (CENTER_X, 300), "GAME OVER", fuente, RED, BLACK)
+    mostrar_texto(screen, (CENTER_X, 500), "SPACE to retry", fuente_2, RED, BLACK)
     pygame.display.flip()
     wait_user(pygame.K_SPACE)
 

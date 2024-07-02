@@ -17,6 +17,7 @@ BLACK = (0, 0, 0)
 CYAN = (0, 255, 255)
 YELLOW = (255, 255, 0)
 MAGENTA = (255, 0, 255)
+BROWN = (165, 42, 42)
 
 # PLAYER:
 player_w = 68
