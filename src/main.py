@@ -34,7 +34,12 @@ healt_sound.set_volume(0.07)
 motor_carFX = pygame.mixer.Sound("./src/assets/sounds/motorFX.mp3")
 motor_carFX.set_volume(0.06)
 music_race.play(loops=-1)
-
+select_sound = pygame.mixer.Sound("./src/assets/sounds/select-sound.mp3")
+select_sound.set_volume(0.05)
+game_over_sound = pygame.mixer.Sound("./src/assets/sounds/finish-sound.mp3")
+game_over_sound.set_volume(0.05)
+hornFX = pygame.mixer.Sound("./src/assets/sounds/horn.mp3")
+hornFX.set_volume(0.05)
 
 # Cargar imagenes
 def escalar_imagenes(imagen, width, height):
@@ -57,7 +62,8 @@ health_powerup_image = pygame.image.load("./src/assets/health.png")
 health_powerup_image = pygame.transform.scale(health_powerup_image, (45, 45))
 danger_hole_image = pygame.image.load("./src/assets/hole.png")
 danger_hole_image = escalar_imagenes(danger_hole_image, danger_hole_w, danger_hole_h)
-
+menu_background = pygame.image.load("./src/assets/background.jpg")
+menu_background = pygame.transform.scale(menu_background, (WIDTH, HEIGHT))
 
 
 
@@ -82,17 +88,21 @@ def wait_user(tecla):
                 pygame.sys.exit()
             if evento.type == pygame.KEYDOWN:
                 if evento.key == tecla:
+                    select_sound.play()
                     flag_start = False
 
+
 high_score = 0
-
+mov_horizontal = True
 while True:
-
-
     # Ventana de inicio
     screen.fill(GREEN)
+    screen.blit(menu_background, (0, 0))
+
     mostrar_texto(screen, (CENTER_X, 100), "FURIOUS ROAD", fuente, RED, BLUE)
-    mostrar_texto(screen, CENTER_SCREEN, "Presione 'Espacio' para comenzar", fuente, RED, BLUE)
+    if high_score != 0:
+        mostrar_texto(screen, (CENTER_SCREEN), f"High Score: {high_score}", fuente, RED, BLUE)
+    mostrar_texto(screen, (CENTER_X, 500), "SPACE to start", fuente, RED, BLUE)
     pygame.display.flip()
     wait_user(pygame.K_SPACE)
 
@@ -129,27 +139,27 @@ while True:
 
             # mover autito
             if event.type == pygame.KEYDOWN:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     move_left = True
                     move_right = False
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     move_right = True
                     move_left = False
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
                     move_up = True
                     move_down = False
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     move_down = True
                     move_up = False
 
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     move_left = False
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     move_right = False
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
                     move_up = False
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     move_down = False
             # FIN mover autito
 
@@ -164,6 +174,17 @@ while True:
 
 
         #       ----> actualizar los elementos <----
+
+        if mov_horizontal:
+            power_up_healt["rect"].x += healt_move_speed
+            if power_up_healt["rect"].x >= limte_x_road - powerup_w:
+                mov_horizontal = False
+        else:
+            power_up_healt["rect"].x -= healt_move_speed
+            if power_up_healt["rect"].x <= centrar_road:
+                mov_horizontal = True
+
+
         # ilusion de scroll de la ruta
         road_y += scroll_speed  # movemos la posicion Y de la calle
         if road_y >= road_h:  
@@ -203,6 +224,7 @@ while True:
 
         # Detectar si chocamos con el trafico
         if detectar_colision(player_block["rect"], traffic_car_block["rect"]):
+            hornFX.play()
             move_up = False
             player_block["rect"].y += reduce_speed
             health -= 1
@@ -222,8 +244,9 @@ while True:
             player_block["rect"].y += reduce_speed 
             health -= 1
             
-        # Detectamos si perdimos y cerrar juego:
+        # Detectamos si perdimos y terminar partida:
         if health <= 0 or player_block["rect"].top > HEIGHT:
+            game_over_sound.play()
             running = False
 
         # Incrementar el puntaje
@@ -257,13 +280,14 @@ while True:
         pygame.display.flip() # actualiza la pantalla
         #       ----> FIN dibujar elementos en pantalla <----
 
-
     # Pantalla GAME OVER
     motor_carFX.stop()
     mostrar_texto(screen, (CENTER_X, 300), "GAME OVER", fuente, RED, BLUE)
     mostrar_texto(screen, (CENTER_X, 500), "SPACE to retry", fuente, RED, BLUE)
     pygame.display.flip()
     wait_user(pygame.K_SPACE)
-    print("Juego finalizado.")
+
+    if score > high_score:
+        high_score = score
 
 terminar()

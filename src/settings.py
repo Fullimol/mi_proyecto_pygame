@@ -44,6 +44,7 @@ aparecer_arriba = -80
 # PowerUps:
 powerup_w = 40
 powerup_h = 40
+healt_move_speed = 6
 
 # Hole:
 danger_hole_w = 100
