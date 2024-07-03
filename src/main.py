@@ -17,10 +17,13 @@ pygame.display.set_caption("Furious Road")
 pygame.display.set_icon(pygame.image.load("./src/assets/images/icon.png"))
 clock = pygame.time.Clock()
 
+
+# creo eventos personalizados
 NEWPOWERUPEVENT = pygame.USEREVENT + 1
 NEWDANGERHOLE = pygame.USEREVENT + 2
 pygame.time.set_timer(NEWPOWERUPEVENT, 5000)
 pygame.time.set_timer(NEWDANGERHOLE, 3000)
+
 
 # Cargar sonidos
 music_race = pygame.mixer.Sound("./src/assets/sounds/music-race.mp3")
@@ -36,6 +39,7 @@ game_over_sound = pygame.mixer.Sound("./src/assets/sounds/finish-sound.mp3")
 game_over_sound.set_volume(0.05)
 hornFX = pygame.mixer.Sound("./src/assets/sounds/horn.mp3")
 hornFX.set_volume(0.05)
+
 
 # Cargar imagenes
 def escalar_imagenes(imagen, width, height):
@@ -55,7 +59,6 @@ tierra_image = pygame.image.load("./src/assets/images/tierra.jpg")
 tierra_image = pygame.transform.scale(tierra_image, (tierra_w, tierra_h))
 pasto_image = pygame.image.load("./src/assets/images/pasto.jpg")
 pasto_image = pygame.transform.scale(pasto_image, (pasto_w, pasto_h))
-# QUITAR o poner EL CONVERT() PARA VER LOS FONDOS NEGROS.
 red_car_image = pygame.image.load("./src/assets/images/red-car.png")
 health_powerup_image = pygame.image.load("./src/assets/images/health.png")
 health_powerup_image = pygame.transform.scale(health_powerup_image, (45, 45))
@@ -64,16 +67,17 @@ danger_hole_image = escalar_imagenes(danger_hole_image, danger_hole_w, danger_ho
 menu_background = pygame.image.load("./src/assets/images/background.jpg")
 menu_background = pygame.transform.scale(menu_background, (WIDTH, HEIGHT))
 
+
 # configuro la fuente del texto
-fuente = pygame.font.Font("./src/assets/fonts/dash-horizon.otf", 75)
-fuente_2 = pygame.font.SysFont(None, 48)
-
-
 def mostrar_texto(superficie:pygame.Surface, coordenada:tuple[int, int], texto:str, fuente:pygame.font.Font, color:tuple[int, int, int]= WHITE, background_color:tuple[int, int, int]= None ):
     sup_texto = fuente.render(texto , True, color, background_color)
     rect_texto = sup_texto.get_rect()
     rect_texto.center = coordenada
     superficie.blit(sup_texto, rect_texto)
+
+fuente = pygame.font.Font("./src/assets/fonts/dash-horizon.otf", 75)
+fuente_2 = pygame.font.SysFont(None, 48)
+
 
 def wait_user(tecla):
     flag_start = True
@@ -87,35 +91,34 @@ def wait_user(tecla):
                     flag_start = False
 
 high_score = 0
-mov_horizontal = True
+mov_horizontal_flag = True
 while True:
-    # Ventana de inicio
-    screen.fill(GREEN)
+    #   --- Ventana de inicio ---
     screen.blit(menu_background, (0, 0))
-
     mostrar_texto(screen, (CENTER_X, 100), "xxx FURIOUS ROAD xxx", fuente, MAGENTA)
     if high_score != 0:
         mostrar_texto(screen, (CENTER_SCREEN), f"High Score    {high_score}", fuente, MAGENTA)
     mostrar_texto(screen, (CENTER_X, 500), "SPACE to start", fuente_2, MAGENTA)
     pygame.display.flip()
     wait_user(pygame.K_SPACE)
+    #   --- FIN ventana de inicio ---
 
 
     # Creo el jugador
     player_block = create_player(red_car_image, CENTER_X - player_w // 2, CENTER_Y - player_h // 2, player_w, player_h)
     # creo autito de trafico
-    current_car_image_index = 0 # esto es para el cambio de imagen
+    current_car_image_index = 0 # esto es para el cambio de imagen segun el index de la lista
     traffic_car_block = create_traffic(traffic_cars_images[current_car_image_index], width=traffic_car_w, height=traffic_car_h)
     # power_up_healt
     power_up_healt = create_powerup(health_powerup_image, width=powerup_w, height=powerup_h)
     # mostrar conos
     danger_hole = create_danger(danger_hole_image, danger_hole_w, danger_hole_h)
 
-    motor_carFX.play(loops=-1)
 
+    # Valores iniciales
+    motor_carFX.play(loops=-1)
     score = 0
     health = 100
-    #mover jugador
     move_left = False
     move_right = False
     move_up = False
@@ -124,13 +127,10 @@ while True:
     running = True
     while running:
         clock.tick(FPS)
-
-        #       ----> detectar los eventos <----
-
+        #                                            ----> Detectar los eventos <----
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 terminar()
-
             # mover autito
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
@@ -145,7 +145,6 @@ while True:
                 if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     move_down = True
                     move_up = False
-
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     move_left = False
@@ -157,29 +156,27 @@ while True:
                     move_down = False
             # FIN mover autito
 
-        # CREAR POWERUP
+            # CREAR POWERUP y CONOS con el tiempo del evento
             if event.type == NEWPOWERUPEVENT:
                 power_up_healt = create_powerup()
 
             if event.type == NEWDANGERHOLE:
                 danger_hole = create_danger(danger_hole_image, danger_hole_w, danger_hole_h)
+        #                                            ----> FIN detectar los eventos <----
 
-        #       ----> FIN detectar los eventos <----
 
-
-        #       ----> actualizar los elementos <----
-
-        if mov_horizontal:
+        #                                            ----> Actualizar los elementos <----
+        # Mover el powerup horizontalmente mientras cae.
+        if mov_horizontal_flag:
             power_up_healt["rect"].x += healt_move_speed
             if power_up_healt["rect"].x >= limte_x_road - powerup_w:
-                mov_horizontal = False
+                mov_horizontal_flag = False
         else:
             power_up_healt["rect"].x -= healt_move_speed
             if power_up_healt["rect"].x <= centrar_road:
-                mov_horizontal = True
+                mov_horizontal_flag = True
 
-
-        # ilusion de scroll de la ruta
+        # Ilusion de scroll de la ruta, tierra y pasto.
         road_y += scroll_speed  # movemos la POSICIÓN Y de la calle desde 0 a abajo
         if road_y >= road_h:  
             road_y = 0  # cuando llege al final, la imagen aparece de nuevo en Y=0 simulando movimiento
@@ -192,7 +189,7 @@ while True:
         if pasto_y >= pasto_h:
             pasto_y = 0
 
-        # Mover el jugador
+        # Mover el jugador verificando teclas y limitando los bordes
         if move_left and player_block["rect"].left > centrar_road - player_w:
             player_block["rect"].x -= SPEED
         if move_right and player_block["rect"].right < limte_x_road + player_w:
@@ -202,7 +199,7 @@ while True:
         if move_down and player_block["rect"].bottom < HEIGHT - 20:
             player_block["rect"].y += SPEED
 
-        #si toco el pasto, me freno
+        # Si toco el pasto, me freno
         if player_block["rect"].left < centrar_road:
             player_block["rect"].y += SPEED - 1
             move_up = False
@@ -212,10 +209,10 @@ while True:
             move_up = False
             score -= 1
 
-        # mover el autito de trafico
+        # Mover el autito de trafico
         traffic_car_block["rect"].y += traffic_speed
         if traffic_car_block["rect"].top > HEIGHT:
-            #cambiar imagen del auto de trafico
+            # cambiar imagen del auto de trafico
             current_car_image_index = (current_car_image_index + 1) % len(traffic_cars_images)
             traffic_car_block["img"] = traffic_cars_images[current_car_image_index]
             # reseteo ubicacion del autito de trafico
@@ -253,43 +250,33 @@ while True:
 
         # Incrementar el puntaje
         score += 1
-        #       ----> FIN actualizar los elementos <----
+        #                                            ----> FIN actualizar los elementos <----
 
 
-        #       ----> dibujar elementos en pantalla <----
-        # screen.fill(GREEN)
+        #                                            ----> Dibujar elementos en pantalla <----
+        # dibujar paisaje:
         screen.blit(pasto_image, (pasto_x, pasto_y))
         screen.blit(pasto_image, (pasto_x, pasto_y - pasto_h))
-
-        # dibujar tierra:
-        # pygame.draw.rect(screen, BROWN, (148, 0, tierra_w, tierra_h))
         screen.blit(tierra_image, (tierra_x, tierra_y))
         screen.blit(tierra_image, (tierra_x, tierra_y - tierra_h))
-            
-        # Dibujar la calle en la pantalla
         screen.blit(road_image, (centrar_road, road_y))  # dibujo la calle por primera vez
         screen.blit(road_image, (centrar_road, road_y - road_h))  # dibujo la imagen de nuevo con el movimiento de la calle
 
-        #Mostrar danger hole
+        # Dibujar objetos en el mundo.
         screen.blit(danger_hole_image, (danger_hole["rect"].x, danger_hole["rect"].y))
-
-        # Dibujar el autitos en la pantalla
         # pygame.draw.rect(screen, BLACK, player_block["rect"])
-        screen.blit(player_block["img"], (player_block["rect"].x, player_block["rect"].y, player_w, player_h)) # autito player
+        screen.blit(player_block["img"], (player_block["rect"].x, player_block["rect"].y, player_w, player_h))
         screen.blit(traffic_car_block["img"], (traffic_car_block["rect"].x, traffic_car_block["rect"].y, player_w, player_h))
-
-        #Mostrar powerup
         screen.blit(health_powerup_image, (power_up_healt["rect"].x, power_up_healt["rect"].y))
 
-
-        # Dibujar el puntaje en la pantalla
+        # Dibujar el puntaje en la pantalla.
         if high_score != 0:
             mostrar_texto(screen, (100, 120), f"High: {high_score}", fuente_2, WHITE, BLACK)
         mostrar_texto(screen, (100, 80), f'Score: {score}', fuente_2, CYAN, BLACK)
         mostrar_texto(screen, (680 , 80), f'Healt % {health}', fuente_2, RED, BLACK)
                             
         pygame.display.flip() # actualiza la pantalla
-        #       ----> FIN dibujar elementos en pantalla <----
+        #                                            ----> FIN dibujar elementos en pantalla <----
 
     # Pantalla GAME OVER
     motor_carFX.stop()

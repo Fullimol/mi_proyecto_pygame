@@ -41,7 +41,6 @@ pasto_h = HEIGHT
 pasto_y = 0
 pasto_x = 0
 
-
 # Traffic:
 traffic_car_w = 68
 traffic_car_h = 95
