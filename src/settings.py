@@ -31,6 +31,17 @@ scroll_speed = 16
 centrar_road = CENTER_X - road_w // 2
 limte_x_road = centrar_road + road_w
 
+tierra_w = 500
+tierra_h = HEIGHT
+tierra_x = 148
+tierra_y = 0
+
+pasto_w = WIDTH
+pasto_h = HEIGHT
+pasto_y = 0
+pasto_x = 0
+
+
 # Traffic:
 traffic_car_w = 68
 traffic_car_h = 95

@@ -6,8 +6,6 @@ import sys
 
 ##########  (!)   30/06  quitar/agregar los .convert() para sacar los fondos negros. HAY QUE CORREGIR LOS RECTANGULOS DE CADA BLOQUE  ##########
 
-## SUGERENCIA:   Hacer un bloque marron para poner en los costados de la ruta simulando la tierra.
-
 def terminar():
     pygame.quit()
     sys.exit()
@@ -15,6 +13,8 @@ def terminar():
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode(SIZE_SCREEN)
+pygame.display.set_caption("Furious Road")
+pygame.display.set_icon(pygame.image.load("./src/assets/images/icon.png"))
 clock = pygame.time.Clock()
 
 NEWPOWERUPEVENT = pygame.USEREVENT + 1
@@ -28,7 +28,7 @@ music_race.set_volume(0.1)
 healt_sound = pygame.mixer.Sound("./src/assets/sounds/health.mp3")
 healt_sound.set_volume(0.07)
 motor_carFX = pygame.mixer.Sound("./src/assets/sounds/motorFX.mp3")
-motor_carFX.set_volume(0.06)
+motor_carFX.set_volume(0.09)
 music_race.play(loops=-1)
 select_sound = pygame.mixer.Sound("./src/assets/sounds/select-sound.mp3")
 select_sound.set_volume(0.05)
@@ -49,10 +49,13 @@ traffic_cars_images = [
     escalar_imagenes(pygame.image.load("./src/assets/images/yellow-car.png"), traffic_car_w, traffic_car_h),
     escalar_imagenes(pygame.image.load("./src/assets/images/white-car.png"), traffic_car_w, traffic_car_h)
 ]
-
 road_image = pygame.image.load("./src/assets/images/road.jpg")
 road_image = pygame.transform.scale(road_image, (road_w, road_h))
-                                                             # QUITAR o poner EL CONVERT() PARA VER LOS FONDOS NEGROS.
+tierra_image = pygame.image.load("./src/assets/images/tierra.jpg")
+tierra_image = pygame.transform.scale(tierra_image, (tierra_w, tierra_h))
+pasto_image = pygame.image.load("./src/assets/images/pasto.jpg")
+pasto_image = pygame.transform.scale(pasto_image, (pasto_w, pasto_h))
+# QUITAR o poner EL CONVERT() PARA VER LOS FONDOS NEGROS.
 red_car_image = pygame.image.load("./src/assets/images/red-car.png")
 health_powerup_image = pygame.image.load("./src/assets/images/health.png")
 health_powerup_image = pygame.transform.scale(health_powerup_image, (45, 45))
@@ -177,9 +180,17 @@ while True:
 
 
         # ilusion de scroll de la ruta
-        road_y += scroll_speed  # movemos la posicion Y de la calle
+        road_y += scroll_speed  # movemos la POSICIÓN Y de la calle desde 0 a abajo
         if road_y >= road_h:  
             road_y = 0  # cuando llege al final, la imagen aparece de nuevo en Y=0 simulando movimiento
+
+        tierra_y += scroll_speed
+        if tierra_y >= tierra_h:
+            tierra_y = 0
+
+        pasto_y += scroll_speed
+        if pasto_y >= pasto_h:
+            pasto_y = 0
 
         # Mover el jugador
         if move_left and player_block["rect"].left > centrar_road - player_w:
@@ -246,16 +257,18 @@ while True:
 
 
         #       ----> dibujar elementos en pantalla <----
-        screen.fill(GREEN)
+        # screen.fill(GREEN)
+        screen.blit(pasto_image, (pasto_x, pasto_y))
+        screen.blit(pasto_image, (pasto_x, pasto_y - pasto_h))
 
         # dibujar tierra:
-        pygame.draw.rect(screen, BROWN, (148, 0, 500, HEIGHT))
+        # pygame.draw.rect(screen, BROWN, (148, 0, tierra_w, tierra_h))
+        screen.blit(tierra_image, (tierra_x, tierra_y))
+        screen.blit(tierra_image, (tierra_x, tierra_y - tierra_h))
             
         # Dibujar la calle en la pantalla
         screen.blit(road_image, (centrar_road, road_y))  # dibujo la calle por primera vez
         screen.blit(road_image, (centrar_road, road_y - road_h))  # dibujo la imagen de nuevo con el movimiento de la calle
-
-        
 
         #Mostrar danger hole
         screen.blit(danger_hole_image, (danger_hole["rect"].x, danger_hole["rect"].y))
