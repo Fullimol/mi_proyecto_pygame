@@ -77,8 +77,7 @@ def wait_user(tecla):
     while flag_start:
         for evento in pygame.event.get():
             if evento.type == pygame.QUIT:
-                pygame.quit()
-                pygame.sys.exit()
+                terminar()
             if evento.type == pygame.KEYDOWN:
                 if evento.key == tecla:
                     select_sound.play()
@@ -248,10 +247,15 @@ while True:
 
         #       ----> dibujar elementos en pantalla <----
         screen.fill(GREEN)
+
+        # dibujar tierra:
+        pygame.draw.rect(screen, BROWN, (148, 0, 500, HEIGHT))
             
         # Dibujar la calle en la pantalla
         screen.blit(road_image, (centrar_road, road_y))  # dibujo la calle por primera vez
         screen.blit(road_image, (centrar_road, road_y - road_h))  # dibujo la imagen de nuevo con el movimiento de la calle
+
+        
 
         #Mostrar danger hole
         screen.blit(danger_hole_image, (danger_hole["rect"].x, danger_hole["rect"].y))
@@ -269,7 +273,7 @@ while True:
         if high_score != 0:
             mostrar_texto(screen, (100, 120), f"High: {high_score}", fuente_2, WHITE, BLACK)
         mostrar_texto(screen, (100, 80), f'Score: {score}', fuente_2, CYAN, BLACK)
-        mostrar_texto(screen, (680 , 80), f'Healt %{health}', fuente_2, RED, BLACK)
+        mostrar_texto(screen, (680 , 80), f'Healt % {health}', fuente_2, RED, BLACK)
                             
         pygame.display.flip() # actualiza la pantalla
         #       ----> FIN dibujar elementos en pantalla <----
