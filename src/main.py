@@ -4,8 +4,6 @@ from bloques import *
 from colisiones import *
 from modulos import *
 
-##########  (!)   30/06  quitar/agregar los .convert() para sacar los fondos negros. HAY QUE CORREGIR LOS RECTANGULOS DE CADA BLOQUE  ##########
-
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode(SIZE_SCREEN)

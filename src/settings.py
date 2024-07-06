@@ -21,7 +21,7 @@ BROWN = (93, 40, 1)
 
 # PLAYER:
 player_w = 68
-player_h = 95
+player_h = 115
 
 # Road:
 road_y = 0  # posicion inicial de la imagen de la calle
@@ -43,11 +43,7 @@ pasto_x = 0
 
 # Traffic:
 traffic_car_w = 68
-traffic_car_h = 95
-
-van_car_w = 80
-van_car_h = 100
-
+traffic_car_h = 115
 reduce_speed = 8
 traffic_speed = 10
 aparecer_arriba = -80
