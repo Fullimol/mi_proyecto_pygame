@@ -8,8 +8,12 @@ def punto_en_rectangulo(punto:tuple, rect:tuple)->bool:
     Returns:
         bool: True si el punto se encuentra dentro del rectangulo.
     """
-    x, y = punto
-    return x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom
+    try:
+        x, y = punto
+        return x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom
+    except TypeError:
+        print("Error: 'punto' y 'rect' deben ser tuplas")
+    
 
 def detectar_colision(rect_1:tuple, rect_2:tuple)->bool:
     """ Revisa si dos rectangulos se intersectan.

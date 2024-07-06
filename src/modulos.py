@@ -32,7 +32,10 @@ def escalar_imagenes(imagen:str, width:int, height:int) -> pygame.Surface:
     Returns:
         _type_: la surface de la imagen escalada.
     """
-    imagen_surface =pygame.image.load(imagen)
+    try:
+        imagen_surface =pygame.image.load(imagen)
+    except:
+        print("Error al cargar la imagen")
     return pygame.transform.scale(imagen_surface, (width, height))
 
 
@@ -46,8 +49,11 @@ def cargar_sonido(sonido:str, volumen:float) -> pygame.mixer.Sound:
     Returns:
         pygame.mixer.Sound: el sonido cargado.
     """
-    sonido_cargado = pygame.mixer.Sound(sonido)
-    sonido_cargado.set_volume(volumen)
+    try:
+        sonido_cargado = pygame.mixer.Sound(sonido)
+        sonido_cargado.set_volume(volumen)
+    except:
+        print("Error al cargar el sonido o indicar volumen")
     return sonido_cargado
     
 
@@ -72,3 +78,35 @@ def wait_user(tecla:int, sonido_tecla:pygame.mixer.Sound) -> None:
                 if evento.key == tecla:
                     sonido_tecla.play()
                     flag_start = False
+
+# guardar el score en un archivo .csv
+def save_data(data) -> None:
+    """ Guardar dato en un archivo .csv.
+
+    Args:
+        data (any): dato a guardar.
+    """
+    try:
+        with open("score.csv", "a") as archivo:
+            archivo.write(f"{data}\n")
+    except:
+        print("Error al intentar guardar el .CSV")
+
+    
+
+#funcion leer Json
+def load_json(url:str) -> dict:
+    """ lee un archivo json.
+
+    Args:
+        url (str): url del archivo.
+
+    Returns:
+        dict: el json en un diccionario.
+    """
+    import json
+    try:
+        with open(url, "r") as archivo:
+            return json.load(archivo)
+    except:
+        print("Error al intentar leer el .JSON")

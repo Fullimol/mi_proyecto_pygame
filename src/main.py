@@ -6,7 +6,6 @@ from modulos import *
 
 ##########  (!)   30/06  quitar/agregar los .convert() para sacar los fondos negros. HAY QUE CORREGIR LOS RECTANGULOS DE CADA BLOQUE  ##########
 
-
 # pygame setup
 pygame.init()
 screen = pygame.display.set_mode(SIZE_SCREEN)
@@ -14,32 +13,34 @@ pygame.display.set_caption("Furious Road")
 pygame.display.set_icon(pygame.image.load("./src/assets/images/icon.png"))
 clock = pygame.time.Clock()
 
+#cargar json con los recursos:
+recursos = load_json("./recursos.json")
 
 # Cargar sonidos
-music_race = cargar_sonido("./src/assets/sounds/music-race.mp3", 0.1)
-healt_sound = cargar_sonido("./src/assets/sounds/health.mp3", 0.07)
-motor_carFX = cargar_sonido("./src/assets/sounds/motorFX.mp3", 0.09)
-select_sound = cargar_sonido("./src/assets/sounds/select-sound.mp3", 0.05)
-game_over_sound = cargar_sonido("./src/assets/sounds/finish-sound.mp3", 0.05)
-hornFX = cargar_sonido("./src/assets/sounds/horn.mp3", 0.05)
+music_race = cargar_sonido(recursos["sounds"]["music_race"], 0.1)
+healt_sound = cargar_sonido(recursos["sounds"]["healt_sound"], 0.07)
+motor_carFX = cargar_sonido(recursos["sounds"]["motor_carFX"], 0.09)
+select_sound = cargar_sonido(recursos["sounds"]["select_sound"], 0.05)
+game_over_sound = cargar_sonido(recursos["sounds"]["game_over_sound"], 0.05)
+hornFX = cargar_sonido(recursos["sounds"]["hornFX"], 0.05)
 
 
 # Cargar imagenes
 traffic_cars_images = [
-    escalar_imagenes("./src/assets/images/blue-car.png", traffic_car_w, traffic_car_h),
-    escalar_imagenes("./src/assets/images/pink-car.png", traffic_car_w, traffic_car_h),
-    escalar_imagenes("./src/assets/images/van-car.png", traffic_car_w, traffic_car_h),
-    escalar_imagenes("./src/assets/images/green-car.png", traffic_car_w, traffic_car_h),
-    escalar_imagenes("./src/assets/images/yellow-car.png", traffic_car_w, traffic_car_h),
-    escalar_imagenes("./src/assets/images/white-car.png", traffic_car_w, traffic_car_h)
+    escalar_imagenes(recursos["images"]["traffic_cars"][0], traffic_car_w, traffic_car_h),
+    escalar_imagenes(recursos["images"]["traffic_cars"][1], traffic_car_w, traffic_car_h),
+    escalar_imagenes(recursos["images"]["traffic_cars"][2], traffic_car_w, traffic_car_h),
+    escalar_imagenes(recursos["images"]["traffic_cars"][3], traffic_car_w, traffic_car_h),
+    escalar_imagenes(recursos["images"]["traffic_cars"][4], traffic_car_w, traffic_car_h),
+    escalar_imagenes(recursos["images"]["traffic_cars"][5], traffic_car_w, traffic_car_h)
 ]
-red_car_image = escalar_imagenes("./src/assets/images/red-car.png", player_w, player_h)
-road_image = escalar_imagenes("./src/assets/images/road.jpg", road_w, road_h)
-tierra_image = escalar_imagenes("./src/assets/images/tierra.jpg", tierra_w, tierra_h)
-pasto_image = escalar_imagenes("./src/assets/images/pasto.jpg", pasto_w, pasto_h)
-health_powerup_image = escalar_imagenes("./src/assets/images/health.png", 45, 45)
-danger_hole_image = escalar_imagenes("./src/assets/images/hole.png", danger_hole_w, danger_hole_h)
-menu_background = escalar_imagenes("./src/assets/images/background.jpg", WIDTH, HEIGHT)
+red_car_image = escalar_imagenes(recursos["images"]["red_car"], player_w, player_h)
+road_image = escalar_imagenes(recursos["images"]["road"], road_w, road_h)
+tierra_image = escalar_imagenes(recursos["images"]["tierra"], tierra_w, tierra_h)
+pasto_image = escalar_imagenes(recursos["images"]["pasto"], pasto_w, pasto_h)
+health_powerup_image = escalar_imagenes(recursos["images"]["health_powerup"], powerup_w, powerup_h)
+danger_hole_image = escalar_imagenes(recursos["images"]["danger_hole"], danger_hole_w, danger_hole_h)
+menu_background = escalar_imagenes(recursos["images"]["menu_background"], WIDTH, HEIGHT)
 
 
 # configuro la fuente del texto
@@ -272,5 +273,6 @@ while True:
 
     if score > high_score:
         high_score = score
+        save_data(high_score)
 
 terminar()
