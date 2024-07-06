@@ -1,8 +1,27 @@
-def punto_en_rectangulo(punto, rect)->bool:
+def punto_en_rectangulo(punto:tuple, rect:tuple)->bool:
+    """ Revisa si un punto se encuentra dentro de un rectangulo.
+
+    Args:
+        punto (tuple): coordenadas del punto.
+        rect (tuple): coordenadas del rectangulo.
+
+    Returns:
+        bool: True si el punto se encuentra dentro del rectangulo.
+    """
     x, y = punto
     return x >= rect.left and x <= rect.right and y >= rect.top and y <= rect.bottom
 
-def detectar_colision(rect_1, rect_2)->bool:
+def detectar_colision(rect_1:tuple, rect_2:tuple)->bool:
+    """ Revisa si dos rectangulos se intersectan.
+
+    Args:
+        rect_1 (tuple): pasamos el rectangulo 1.
+        rect_2 (tuple): pasamos el rectangulo 2.
+
+    Returns:
+        bool: comprueba cada vertice del rectangulo 1 y el rectangulo 2.
+              si se tocan, devuelve True.
+    """
     # Revisa si algún punto de rec_1 esta dentro de rec_2
     if punto_en_rectangulo(rect_1.topleft, rect_2) or \
        punto_en_rectangulo(rect_1.topright, rect_2) or\
