@@ -58,9 +58,11 @@ pygame.time.set_timer(NEWDANGERHOLE, 3000)
 high_score = 0
 mov_horizontal_flag = True
 music_on = True
+music_race.play(loops=-1)
+
 while True:
-    if music_on:
-        music_race.play(loops=-1)
+    if not music_on:
+        music_race.stop()
 
     #   --- Ventana de inicio ---
     start_menu_screen(screen, high_score, select_sound, menu_background, fuente, fuente_2)
