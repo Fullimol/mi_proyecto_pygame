@@ -1,8 +1,10 @@
 import pygame
 from settings import *
-from bloques import *
-from colisiones import *
-from modulos import *
+from bloques import create_player, create_danger, create_powerup, create_traffic
+from colisiones import detectar_colision
+from modulos import load_json, save_data, cargar_sonido, escalar_imagenes, terminar, mostrar_texto, wait_user
+from start_menu import start_menu_screen
+from random import randint
 
 # pygame setup
 pygame.init()
@@ -61,23 +63,13 @@ while True:
         music_race.play(loops=-1)
 
     #   --- Ventana de inicio ---
-    screen.blit(menu_background, (0, 0))
-    mostrar_texto(screen, (CENTER_X, 100), "xxx FURIOUS ROAD xxx", fuente, MAGENTA)
-    if high_score != 0:
-        mostrar_texto(screen, (CENTER_SCREEN), f"High Score    {high_score}", fuente, MAGENTA)
-    mostrar_texto(screen, (CENTER_X, 500), "SPACE to start", fuente_2, MAGENTA)
-    pygame.display.flip()
-    wait_user(pygame.K_SPACE, select_sound)
-    #   --- FIN ventana de inicio ---
+    start_menu_screen(screen, high_score, select_sound, menu_background, fuente, fuente_2)
     
 
-    # Creo el jugador
+    # --- Crear objetos en el mundo ---
     player_block = create_player(red_car_image, player_center_X, player_center_Y, player_w, player_h)
-    # creo autito de trafico
     traffic_car_block = create_traffic(traffic_cars_images[0], width=traffic_car_w, height=traffic_car_h)
-    # power_up_healt
     power_up_healt = create_powerup(health_powerup_image, width=powerup_w, height=powerup_h)
-    # mostrar conos
     danger_hole = create_danger(danger_hole_image, danger_hole_w, danger_hole_h)
 
 
@@ -265,6 +257,7 @@ while True:
     mostrar_texto(screen, (CENTER_X, 500), "SPACE to retry", fuente_2, RED, BLACK)
     pygame.display.flip()
     wait_user(pygame.K_SPACE, select_sound)
+    
 
     if score > high_score:
         high_score = score
