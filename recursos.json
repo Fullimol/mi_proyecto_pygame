@@ -23,5 +23,8 @@
         "health_powerup": "./src/assets/images/health.png",
         "danger_hole": "./src/assets/images/hole.png",
         "menu_background": "./src/assets/images/background.jpg"
+    },
+    "fonts": {
+        "fuente1": "./src/assets/fonts/dash-horizon.otf"
     }
 }

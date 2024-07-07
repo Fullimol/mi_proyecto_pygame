@@ -32,7 +32,6 @@ traffic_cars_images = [
     escalar_imagenes(recursos["images"]["traffic_cars"][4], traffic_car_w, traffic_car_h),
     escalar_imagenes(recursos["images"]["traffic_cars"][5], traffic_car_w, traffic_car_h)
 ]
-
 red_car_image = escalar_imagenes(recursos["images"]["red_car"], player_w, player_h)
 road_image = escalar_imagenes(recursos["images"]["road"], road_w, road_h)
 tierra_image = escalar_imagenes(recursos["images"]["tierra"], tierra_w, tierra_h)
@@ -43,7 +42,7 @@ menu_background = escalar_imagenes(recursos["images"]["menu_background"], WIDTH,
 
 
 # configuro la fuente del texto
-fuente = pygame.font.Font("./src/assets/fonts/dash-horizon.otf", 75)
+fuente = pygame.font.Font(recursos["fonts"]["fuente1"], 75)
 fuente_2 = pygame.font.SysFont(None, 48)
 
 
