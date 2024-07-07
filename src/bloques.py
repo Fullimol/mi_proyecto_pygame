@@ -23,10 +23,10 @@ def create_player(imagen:pygame.Surface = None, left=0, top=0, width=10, height=
     return create_block(imagen,left, top, width, height)
 
 def create_traffic(imagen:pygame.Surface = None, width=50, height=50):
-    return create_block(imagen, randint(centrar_road, limte_x_road - player_w), aparecer_arriba, width, height)
+    return create_block(imagen, randint(road_left, road_right - player_w), aparecer_arriba, width, height)
 
 def create_powerup(imagen:pygame.Surface = None, width=20, height=20):
-    return create_block(imagen, randint(centrar_road, limte_x_road - player_w), aparecer_arriba, width, height)
+    return create_block(imagen, randint(road_left, road_right - player_w), aparecer_arriba, width, height)
 
 def create_danger(imagen:pygame.Surface = None, width=20, height=20):
-    return create_block(imagen, randint(centrar_road, limte_x_road - player_w), aparecer_arriba, width, height)
+    return create_block(imagen, randint(road_left, road_right - player_w), aparecer_arriba, width, height)

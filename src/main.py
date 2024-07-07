@@ -32,6 +32,7 @@ traffic_cars_images = [
     escalar_imagenes(recursos["images"]["traffic_cars"][4], traffic_car_w, traffic_car_h),
     escalar_imagenes(recursos["images"]["traffic_cars"][5], traffic_car_w, traffic_car_h)
 ]
+
 red_car_image = escalar_imagenes(recursos["images"]["red_car"], player_w, player_h)
 road_image = escalar_imagenes(recursos["images"]["road"], road_w, road_h)
 tierra_image = escalar_imagenes(recursos["images"]["tierra"], tierra_w, tierra_h)
@@ -57,7 +58,6 @@ high_score = 0
 mov_horizontal_flag = True
 music_on = True
 while True:
-    # (!)           CORREGIR ESTO, QUE CUANDO ESTÁ EN TRUE, AL TERMINAR LA PARTIDA VUELVA A SONAR LA CANCIÓN POR ENCIMA
     if music_on:
         music_race.play(loops=-1)
 
@@ -73,10 +73,9 @@ while True:
     
 
     # Creo el jugador
-    player_block = create_player(red_car_image, CENTER_X - player_w // 2, CENTER_Y - player_h // 2, player_w, player_h)
+    player_block = create_player(red_car_image, player_center_X, player_center_Y, player_w, player_h)
     # creo autito de trafico
-    current_car_image_index = 0 # esto es para el cambio de imagen segun el index de la lista
-    traffic_car_block = create_traffic(traffic_cars_images[current_car_image_index], width=traffic_car_w, height=traffic_car_h)
+    traffic_car_block = create_traffic(traffic_cars_images[0], width=traffic_car_w, height=traffic_car_h)
     # power_up_healt
     power_up_healt = create_powerup(health_powerup_image, width=powerup_w, height=powerup_h)
     # mostrar conos
@@ -147,31 +146,31 @@ while True:
         #                                            ----> Actualizar los elementos <----
         # Mover el powerup horizontalmente mientras cae.
         if mov_horizontal_flag:
-            power_up_healt["rect"].x += healt_move_speed
-            if power_up_healt["rect"].x >= limte_x_road - powerup_w:
+            power_up_healt["rect"].x += healt_move_speed_x
+            if power_up_healt["rect"].x >= road_right - powerup_w:
                 mov_horizontal_flag = False
         else:
-            power_up_healt["rect"].x -= healt_move_speed
-            if power_up_healt["rect"].x <= centrar_road:
+            power_up_healt["rect"].x -= healt_move_speed_x
+            if power_up_healt["rect"].x <= road_left:
                 mov_horizontal_flag = True
 
         # Ilusion de scroll de la ruta, tierra y pasto.
-        road_y += scroll_speed  # movemos la POSICIÓN Y de la calle desde 0 a abajo
-        if road_y >= road_h:  
-            road_y = 0  # cuando llege al final, la imagen aparece de nuevo en Y=0 simulando movimiento
+        road_top += scroll_speed  # movemos la POSICIÓN Y de la calle desde 0 a abajo
+        if road_top >= road_h:  
+            road_top = 0  # cuando llege al final, la imagen aparece de nuevo en Y=0 simulando movimiento
 
-        tierra_y += scroll_speed
-        if tierra_y >= tierra_h:
-            tierra_y = 0
+        tierra_top += scroll_speed
+        if tierra_top >= tierra_h:
+            tierra_top = 0
 
-        pasto_y += scroll_speed
-        if pasto_y >= pasto_h:
-            pasto_y = 0
+        pasto_top += scroll_speed
+        if pasto_top >= pasto_h:
+            pasto_top = 0
 
         # Mover el jugador verificando teclas y limitando los bordes
-        if move_left and player_block["rect"].left > centrar_road - player_w:
+        if move_left and player_block["rect"].left > road_left - player_w:
             player_block["rect"].x -= SPEED
-        if move_right and player_block["rect"].right < limte_x_road + player_w:
+        if move_right and player_block["rect"].right < road_right + player_w:
             player_block["rect"].x += SPEED
         if move_up and player_block["rect"].top > 20:
             player_block["rect"].y -= SPEED
@@ -179,11 +178,11 @@ while True:
             player_block["rect"].y += SPEED
 
         # Si toco el pasto, me freno
-        if player_block["rect"].left < centrar_road:
+        if player_block["rect"].left < road_left:
             player_block["rect"].y += SPEED - 1
             move_up = False
             score -= 1
-        if player_block["rect"].right > limte_x_road:
+        if player_block["rect"].right > road_right:
             player_block["rect"].y += SPEED - 1
             move_up = False
             score -= 1
@@ -192,10 +191,9 @@ while True:
         traffic_car_block["rect"].y += traffic_speed
         if traffic_car_block["rect"].top > HEIGHT:
             # cambiar imagen del auto de trafico
-            current_car_image_index = (current_car_image_index + 1) % len(traffic_cars_images)
-            traffic_car_block["img"] = traffic_cars_images[current_car_image_index]
+            traffic_car_block["img"] = traffic_cars_images[randint(0, len(traffic_cars_images) - 1)] # index aleatorio para cargar la img del auto
             # reseteo ubicacion del autito de trafico
-            traffic_car_block["rect"].x = randint(centrar_road, limte_x_road - traffic_car_w)
+            traffic_car_block["rect"].x = randint(road_left, road_right - traffic_car_w)
             traffic_car_block["rect"].y = aparecer_arriba
         power_up_healt["rect"].y += SPEED
         danger_hole["rect"].y += scroll_speed
@@ -234,12 +232,12 @@ while True:
 
         #                                            ----> Dibujar elementos en pantalla <----
         # dibujar paisaje:
-        screen.blit(pasto_image, (pasto_x, pasto_y))
-        screen.blit(pasto_image, (pasto_x, pasto_y - pasto_h))
-        screen.blit(tierra_image, (tierra_x, tierra_y))
-        screen.blit(tierra_image, (tierra_x, tierra_y - tierra_h))
-        screen.blit(road_image, (centrar_road, road_y))  # dibujo la calle por primera vez
-        screen.blit(road_image, (centrar_road, road_y - road_h))  # dibujo la imagen de nuevo con el movimiento de la calle
+        screen.blit(pasto_image, (pasto_left, pasto_top))
+        screen.blit(pasto_image, (pasto_left, pasto_top - pasto_h))
+        screen.blit(tierra_image, (tierra_left, tierra_top))
+        screen.blit(tierra_image, (tierra_left, tierra_top - tierra_h))
+        screen.blit(road_image, (road_left, road_top))  # dibujo la calle por primera vez
+        screen.blit(road_image, (road_left, road_top - road_h))  # dibujo la imagen fuera de pantalla para simular movimiento
 
         # Dibujar objetos en el mundo.
         screen.blit(danger_hole_image, (danger_hole["rect"].x, danger_hole["rect"].y))
