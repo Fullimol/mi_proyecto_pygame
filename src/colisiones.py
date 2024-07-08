@@ -1,5 +1,5 @@
 def punto_en_rectangulo(punto:tuple, rect:tuple)->bool:
-    """ Revisa si un punto se encuentra dentro de un rectangulo.
+    """ Revisa si las coordenadas de un punto se encuentra dentro de los vertices de un rectangulo.
 
     Args:
         punto (tuple): coordenadas del punto.

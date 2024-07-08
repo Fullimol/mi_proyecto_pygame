@@ -21,7 +21,7 @@ def mostrar_texto(superficie:pygame.Surface, coordenada:tuple[int, int], texto:s
 
 
 # Cargar imagenes
-def escalar_imagenes(imagen:str, width:int, height:int) -> pygame.Surface:
+def cargar_imagen(imagen:str, width:int, height:int) -> pygame.Surface:
     """ Recibe la URL de la imagen y la escala.
 
     Args:

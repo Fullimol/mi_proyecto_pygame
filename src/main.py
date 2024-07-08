@@ -2,7 +2,7 @@ import pygame
 from settings import *
 from bloques import create_player, create_danger, create_powerup, create_traffic
 from colisiones import detectar_colision
-from modulos import load_json, save_data, cargar_sonido, escalar_imagenes, terminar, mostrar_texto, wait_user
+from modulos import load_json, save_data, cargar_sonido, cargar_imagen, terminar, mostrar_texto, wait_user
 from start_menu import start_menu_screen
 from random import randint
 
@@ -27,20 +27,20 @@ hornFX = cargar_sonido(recursos["sounds"]["hornFX"], 0.05)
 
 # Cargar imagenes
 traffic_cars_images = [
-    escalar_imagenes(recursos["images"]["traffic_cars"][0], traffic_car_w, traffic_car_h),
-    escalar_imagenes(recursos["images"]["traffic_cars"][1], traffic_car_w, traffic_car_h),
-    escalar_imagenes(recursos["images"]["traffic_cars"][2], traffic_car_w, traffic_car_h),
-    escalar_imagenes(recursos["images"]["traffic_cars"][3], traffic_car_w, traffic_car_h),
-    escalar_imagenes(recursos["images"]["traffic_cars"][4], traffic_car_w, traffic_car_h),
-    escalar_imagenes(recursos["images"]["traffic_cars"][5], traffic_car_w, traffic_car_h)
+    cargar_imagen(recursos["images"]["traffic_cars"][0], traffic_car_w, traffic_car_h),
+    cargar_imagen(recursos["images"]["traffic_cars"][1], traffic_car_w, traffic_car_h),
+    cargar_imagen(recursos["images"]["traffic_cars"][2], traffic_car_w, traffic_car_h),
+    cargar_imagen(recursos["images"]["traffic_cars"][3], traffic_car_w, traffic_car_h),
+    cargar_imagen(recursos["images"]["traffic_cars"][4], traffic_car_w, traffic_car_h),
+    cargar_imagen(recursos["images"]["traffic_cars"][5], traffic_car_w, traffic_car_h)
 ]
-red_car_image = escalar_imagenes(recursos["images"]["red_car"], player_w, player_h)
-road_image = escalar_imagenes(recursos["images"]["road"], road_w, road_h)
-tierra_image = escalar_imagenes(recursos["images"]["tierra"], tierra_w, tierra_h)
-pasto_image = escalar_imagenes(recursos["images"]["pasto"], pasto_w, pasto_h)
-health_powerup_image = escalar_imagenes(recursos["images"]["health_powerup"], powerup_w, powerup_h)
-danger_hole_image = escalar_imagenes(recursos["images"]["danger_hole"], danger_hole_w, danger_hole_h)
-menu_background = escalar_imagenes(recursos["images"]["menu_background"], WIDTH, HEIGHT)
+red_car_image = cargar_imagen(recursos["images"]["red_car"], player_w, player_h)
+road_image = cargar_imagen(recursos["images"]["road"], road_w, road_h)
+tierra_image = cargar_imagen(recursos["images"]["tierra"], tierra_w, tierra_h)
+pasto_image = cargar_imagen(recursos["images"]["pasto"], pasto_w, pasto_h)
+health_powerup_image = cargar_imagen(recursos["images"]["health_powerup"], powerup_w, powerup_h)
+danger_hole_image = cargar_imagen(recursos["images"]["danger_hole"], danger_hole_w, danger_hole_h)
+menu_background = cargar_imagen(recursos["images"]["menu_background"], WIDTH, HEIGHT)
 
 
 # configuro la fuente del texto
@@ -48,13 +48,13 @@ fuente = pygame.font.Font(recursos["fonts"]["fuente1"], 75)
 fuente_2 = pygame.font.SysFont(None, 48)
 
 
-# creo eventos personalizados
+# creo eventos personalizados usando la constante de pygame
 NEWPOWERUPEVENT = pygame.USEREVENT + 1
 NEWDANGERHOLE = pygame.USEREVENT + 2
 pygame.time.set_timer(NEWPOWERUPEVENT, 5000)
 pygame.time.set_timer(NEWDANGERHOLE, 3000)
 
-
+# Valores iniciales al iniciar programa.
 high_score = 0
 mov_horizontal_flag = True
 music_on = True
@@ -71,7 +71,7 @@ while True:
     # --- Crear objetos en el mundo ---
     player_block = create_player(red_car_image, player_center_X, player_center_Y, player_w, player_h)
     traffic_car_block = create_traffic(traffic_cars_images[0], width=traffic_car_w, height=traffic_car_h)
-    power_up_healt = create_powerup(health_powerup_image, width=powerup_w, height=powerup_h)
+    power_up_health = create_powerup(health_powerup_image, width=powerup_w, height=powerup_h)
     danger_hole = create_danger(danger_hole_image, danger_hole_w, danger_hole_h)
 
 
@@ -129,7 +129,7 @@ while True:
 
             # CREAR POWERUP y CONOS con el tiempo del evento
             if event.type == NEWPOWERUPEVENT:
-                power_up_healt = create_powerup()
+                power_up_health = create_powerup()
 
             if event.type == NEWDANGERHOLE:
                 danger_hole = create_danger(danger_hole_image, danger_hole_w, danger_hole_h)
@@ -139,25 +139,25 @@ while True:
         #                                            ----> Actualizar los elementos <----
         # Mover el powerup horizontalmente mientras cae.
         if mov_horizontal_flag:
-            power_up_healt["rect"].x += healt_move_speed_x
-            if power_up_healt["rect"].x >= road_right - powerup_w:
+            power_up_health["rect"].x += healt_move_speed_x
+            if power_up_health["rect"].x >= road_right - powerup_w:
                 mov_horizontal_flag = False
         else:
-            power_up_healt["rect"].x -= healt_move_speed_x
-            if power_up_healt["rect"].x <= road_left:
+            power_up_health["rect"].x -= healt_move_speed_x
+            if power_up_health["rect"].x <= road_left:
                 mov_horizontal_flag = True
 
         # Ilusion de scroll de la ruta, tierra y pasto.
         road_top += scroll_speed  # movemos la POSICIÓN Y de la calle desde 0 a abajo
-        if road_top >= road_h:  
+        if road_top >= HEIGHT:  
             road_top = 0  # cuando llege al final, la imagen aparece de nuevo en Y=0 simulando movimiento
 
         tierra_top += scroll_speed
-        if tierra_top >= tierra_h:
+        if tierra_top >= HEIGHT:
             tierra_top = 0
 
         pasto_top += scroll_speed
-        if pasto_top >= pasto_h:
+        if pasto_top >= HEIGHT:
             pasto_top = 0
 
         # Mover el jugador verificando teclas y limitando los bordes
@@ -188,21 +188,21 @@ while True:
             # reseteo ubicacion del autito de trafico
             traffic_car_block["rect"].x = randint(road_left, road_right - traffic_car_w)
             traffic_car_block["rect"].y = aparecer_arriba
-        power_up_healt["rect"].y += SPEED
+        power_up_health["rect"].y += SPEED
         danger_hole["rect"].y += scroll_speed
 
         # Detectar si chocamos con el trafico
         if detectar_colision(player_block["rect"], traffic_car_block["rect"]):
             hornFX.play()
             move_up = False
-            player_block["rect"].y += reduce_speed
+            player_block["rect"].y += traffic_speed
             health -= 1
             score -= 1
         
         # Detectar si chocamos con el powerup
-        if detectar_colision(player_block["rect"], power_up_healt["rect"]):
+        if detectar_colision(player_block["rect"], power_up_health["rect"]):
             healt_sound.play()
-            power_up_healt["rect"].y = 700
+            power_up_health["rect"].y = 700 # ocultarlo de la pantlla
             health += 20
             if health > 100:
                 health = 100
@@ -234,16 +234,15 @@ while True:
 
         # Dibujar objetos en el mundo.
         screen.blit(danger_hole_image, (danger_hole["rect"].x, danger_hole["rect"].y))
-        # pygame.draw.rect(screen, BLACK, player_block["rect"])
-        screen.blit(player_block["img"], (player_block["rect"].x, player_block["rect"].y, player_w, player_h))
-        screen.blit(traffic_car_block["img"], (traffic_car_block["rect"].x, traffic_car_block["rect"].y, player_w, player_h))
-        screen.blit(health_powerup_image, (power_up_healt["rect"].x, power_up_healt["rect"].y))
+        screen.blit(player_block["img"], (player_block["rect"].x, player_block["rect"].y))
+        screen.blit(traffic_car_block["img"], (traffic_car_block["rect"].x, traffic_car_block["rect"].y))
+        screen.blit(health_powerup_image, (power_up_health["rect"].x, power_up_health["rect"].y))
 
         # Dibujar el puntaje en la pantalla.
         if high_score != 0:
             mostrar_texto(screen, (100, 120), f"High: {high_score}", fuente_2, WHITE, BLACK)
         mostrar_texto(screen, (100, 80), f'Score: {score}', fuente_2, CYAN, BLACK)
-        mostrar_texto(screen, (680 , 80), f'Healt % {health}', fuente_2, RED, BLACK)
+        mostrar_texto(screen, (680 , 80), f'Health % {health}', fuente_2, RED, BLACK)
 
         if music_on == False:
             mostrar_texto(screen, (100, 560), "Music OFF", fuente_2, WHITE, BLACK)
